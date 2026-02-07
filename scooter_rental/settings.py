@@ -51,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Убрал debug_toolbar, чтобы не было лишних ошибок
 ]
 
 ROOT_URLCONF = 'scooter_rental.urls'
@@ -130,7 +129,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # ← ДОБАВЬТЕ
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Для debug toolbar
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
