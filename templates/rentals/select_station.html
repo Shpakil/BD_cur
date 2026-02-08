@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Выбор станции{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>Выберите станцию</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Далее</button>
+                    <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">Отмена</a>
+                </form>
+                
+                <hr>
+                <h5>Доступные станции:</h5>
+                <div class="list-group mt-3">
+                    {% for station in form.fields.station.queryset %}
+                        <div class="list-group-item">
+                            <h6>{{ station.name }}</h6>
+                            <p class="mb-1">{{ station.address }}</p>
+                            <small>Доступно самокатов: {{ station.available_scooters_count }}/{{ station.capacity }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
