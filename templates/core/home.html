@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Выберите станцию начала поездки</h2>
+<div class="row">
+    {% for station in stations %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ station.name }}</h5>
+                <p>Адрес: {{ station.location }}</p>
+                <a href="{% url 'station_detail' station.id %}" class="btn btn-success">Выбрать станцию</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

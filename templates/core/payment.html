@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Оплата поездки #{{ rental.id }}</h2>
+<div class="card p-4">
+    <h4>К оплате: {{ amount }} руб.</h4>
+    <p>Время в пути: {{ rental.start_time }} - {{ rental.end_time }}</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Номер карты (симуляция)</label>
+            <input type="text" class="form-control" placeholder="0000 0000 0000 0000" required>
+        </div>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control" placeholder="MM/YY" required></div>
+            <div class="col"><input type="text" class="form-control" placeholder="CVC" required></div>
+        </div>
+        <button type="submit" class="btn btn-success mt-3 w-100">Оплатить</button>
+    </form>
+</div>
+{% endblock %}

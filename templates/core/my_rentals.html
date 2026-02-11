@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Мои поездки</h2>
+<div class="list-group mt-3">
+    {% for rental in rentals %}
+    <div class="list-group-item mb-3 shadow-sm">
+        <h5>Самокат: {{ rental.scooter.serial_number }} ({{ rental.scooter.model.name }})</h5>
+        <p class="mb-1"><strong>Начало:</strong> {{ rental.start_time|date:"d.m.Y H:i" }}</p>
+
+        {% if not rental.end_time %}
+            <div class="alert alert-info mt-2">
+                <form action="{% url 'finish_rent' rental.id %}" method="post">
+                    {% csrf_token %}
+                    <label>Выберите станцию завершения:</label>
+                    <select name="end_station" class="form-control mb-2" required>
+                        {% for station in stations %}
+                            <option value="{{ station.id }}">{{ station.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-danger w-100">Завершить поездку</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="mb-1"><strong>Завершено:</strong> {{ rental.end_time|date:"d.m.Y H:i" }}</p>
+            <p class="mb-1 text-success font-weight-bold"><strong>Сумма:</strong> {{ rental.total_cost }} руб.</p>
+
+            <hr>
+
+            {% if rental.review %}
+                <div class="mt-2 p-3 bg-light border rounded">
+                    <div class="d-flex justify-content-between">
+                        <strong>Ваша оценка: {{ rental.review.rating }}/5 ⭐</strong>
+                    </div>
+                    <p class="mb-0 italic text-muted">"{{ rental.review.text }}"</p>
+                </div>
+            {% else %}
+                <div class="mt-2">
+                    <a href="{% url 'leave_review' rental.id %}" class="btn btn-outline-primary btn-sm">
+                        Оставить отзыв
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>У вас пока нет поездок. Самое время <a href="{% url 'home' %}">арендовать самокат</a>!</p>
+    {% endfor %}
+</div>
+{% endblock %}

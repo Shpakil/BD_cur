@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input {
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .error {
+            color: red;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            border: 1px solid red;
+        }
+        .success {
+            color: green;
+            background-color: #e6ffe6;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            border: 1px solid green;
+        }
+        .field-error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Регистрация нового пользователя</h1>
+
+    <!-- ПОКАЗЫВАЕМ ВСЕ СООБЩЕНИЯ -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Поле для ошибок конкретного поля (опционально) -->
+        <div id="form-errors" class="error" style="display: none;"></div>
+
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required
+               value="{{ request.POST.username|default:'' }}">
+        <div id="username-error" class="field-error"></div>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required
+               value="{{ request.POST.email|default:'' }}">
+        <div id="email-error" class="field-error"></div>
+
+        <label for="phone">Телефон:</label>
+        <input type="tel" id="phone" name="phone" required
+               value="{{ request.POST.phone|default:'' }}">
+        <div id="phone-error" class="field-error"></div>
+
+        <label for="password1">Пароль:</label>
+        <input type="password" id="password1" name="password1" required>
+        <div id="password1-error" class="field-error"></div>
+
+        <label for="password2">Подтвердите пароль:</label>
+        <input type="password" id="password2" name="password2" required>
+        <div id="password2-error" class="field-error"></div>
+
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px;">
+        Уже есть аккаунт? <a href="/users/login/">Войти</a>
+    </p>
+
+    <!-- JavaScript для валидации на стороне клиента -->
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            let isValid = true;
+            const errors = [];
+
+            // Очистка предыдущих ошибок
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+
+            // Проверка имени пользователя
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                document.getElementById('username-error').textContent = 'Введите имя пользователя';
+                isValid = false;
+            }
+
+            // Проверка email
+            const email = document.getElementById('email').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email) {
+                document.getElementById('email-error').textContent = 'Введите email';
+                isValid = false;
+            } else if (!emailRegex.test(email)) {
+                document.getElementById('email-error').textContent = 'Введите корректный email';
+                isValid = false;
+            }
+
+            // Проверка телефона
+            const phone = document.getElementById('phone').value.trim();
+            if (!phone) {
+                document.getElementById('phone-error').textContent = 'Введите телефон';
+                isValid = false;
+            }
+
+            // Проверка паролей
+            const password1 = document.getElementById('password1').value;
+            const password2 = document.getElementById('password2').value;
+
+            if (!password1) {
+                document.getElementById('password1-error').textContent = 'Введите пароль';
+                isValid = false;
+            } else if (password1.length < 6) {
+                document.getElementById('password1-error').textContent = 'Пароль должен быть не менее 6 символов';
+                isValid = false;
+            }
+
+            if (!password2) {
+                document.getElementById('password2-error').textContent = 'Подтвердите пароль';
+                isValid = false;
+            }
+
+            if (password1 && password2 && password1 !== password2) {
+                document.getElementById('password2-error').textContent = 'Пароли не совпадают';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                document.getElementById('form-errors').textContent = 'Пожалуйста, исправьте ошибки в форме';
+                document.getElementById('form-errors').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

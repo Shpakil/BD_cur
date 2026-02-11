@@ -1,13 +1,14 @@
-# scooter_rental/urls.py
-from django.contrib import admin
+﻿from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-from homepage import views as homepage_views
+from django.contrib.auth import views as auth_views  # Импорт стандартных входов
+from users.views import register  # Твоя функция регистрации
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', homepage_views.home, name='home'),
-    path('users/', include('users.urls')),
-    path('rentals/', include('rentals.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('', include('core.urls')),
+
+    # ВОТ ЭТИ СТРОКИ ДОЛЖНЫ БЫТЬ ТУТ:
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('register/', register, name='register'),
+]

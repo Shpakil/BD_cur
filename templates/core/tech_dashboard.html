@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-danger">🔧 Панель Техника</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Модель</th>
+            <th>Статус</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for scooter in scooters %}
+        <tr>
+            <td>{{ scooter.serial_number }}</td>
+            <td>{{ scooter.model.name }}</td>
+            <td>
+                {% if scooter.status == 'broken' %}
+                    <span class="badge bg-danger">Сломан</span>
+                {% elif scooter.status == 'maintenance' %}
+                    <span class="badge bg-warning">Обслуживание</span>
+                {% else %}
+                    <span class="badge bg-success">{{ scooter.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td>
+                <form action="{% url 'change_status' scooter.id %}" method="post" class="d-flex">
+                    {% csrf_token %}
+                    <select name="status" class="form-select form-select-sm me-2">
+                        <option value="available">Доступен</option>
+                        <option value="maintenance">На обслуживание</option>
+                        <option value="broken">Сломан</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-outline-dark">Ок</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

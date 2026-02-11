@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Оставить отзыв о поездке #{{ rental.id }}</h2>
+<p>Самокат: {{ rental.scooter.serial_number }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Опубликовать</button>
+    <a href="{% url 'my_rentals' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

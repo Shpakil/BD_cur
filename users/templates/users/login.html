@@ -1,0 +1,92 @@
+<!-- users/templates/users/login.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в систему</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input {
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+        .info {
+            color: blue;
+            background-color: #e6f3ff;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Вход в систему аренды самокатов</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Войти</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px;">
+        Нет аккаунта? <a href="/users/register/">Зарегистрироваться</a>
+    </p>
+
+    <p style="text-align: center; margin-top: 10px;">
+        <a href="/admin/">Войти как администратор</a>
+    </p>
+</body>
+</html>

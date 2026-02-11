@@ -1,0 +1,101 @@
+<!-- users/templates/users/dashboard.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .user-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .action-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+        .action-card:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-5px);
+        }
+        .action-card h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .logout {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .logout a {
+            color: #dc3545;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Личный кабинет</h1>
+        <p>Добро пожаловать, {{ user.username }}!</p>
+    </header>
+    
+    <div class="user-info">
+        <h2>Информация о профиле</h2>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Телефон:</strong> {{ user.userprofile.phone }}</p>
+        <p><strong>Баланс:</strong> {{ user.userprofile.balance }} руб.</p>
+        <p><strong>Роль:</strong> {{ user.userprofile.get_role_display }}</p>
+    </div>
+    
+    <div class="actions">
+        <a href="{% url 'select_station' %}" class="action-card">
+            <h3>🚲 Арендовать самокат</h3>
+            <p>Выберите станцию и самокат для аренды</p>
+        </a>
+        
+        <a href="{% url 'rental_history' %}" class="action-card">
+            <h3>📋 История аренд</h3>
+            <p>Посмотрите ваши предыдущие аренды</p>
+        </a>
+        
+        <div class="action-card">
+            <h3>💰 Пополнить баланс</h3>
+            <p>Добавить средства на счет</p>
+        </div>
+        
+        <div class="action-card">
+            <h3>⚙️ Настройки</h3>
+            <p>Изменить данные профиля</p>
+        </div>
+    </div>
+    
+    <div class="logout">
+        <a href="{% url 'logout' %}">Выйти из системы</a>
+    </div>
+</body>
+</html>

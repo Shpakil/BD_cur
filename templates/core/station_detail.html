@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Самокаты на станции {{ station.name }}</h2>
+<div class="row">
+    {% for scooter in scooters %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ scooter.model.name }}</h5>
+                <p>Заряд: {{ scooter.model.battery_level }}%</p>
+                <a href="{% url 'start_rent' scooter.id %}" class="btn btn-primary">Арендовать этот самокат</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>На этой станции сейчас нет свободных самокатов.</p>
+    {% endfor %}
+</div>
+<a href="{% url 'home' %}" class="btn btn-secondary">Назад к списку станций</a>
+{% endblock %}
