@@ -25,4 +25,6 @@ urlpatterns = [
     # Выгрузка данных
     path('export/csv/', views.export_scooters_csv, name='export_scooters_csv'),
     path('export/json/', views.export_scooters_json, name='export_scooters_json'),
+    path('export/csv/<str:model_name>/', views.export_to_csv, name='export_csv'),
+    path('export/json/<str:model_name>/', views.export_to_json, name='export_json'),
 ]

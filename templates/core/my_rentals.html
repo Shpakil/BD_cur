@@ -1,50 +1,117 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Мои поездки</h2>
-<div class="list-group mt-3">
-    {% for rental in rentals %}
-    <div class="list-group-item mb-3 shadow-sm">
-        <h5>Самокат: {{ rental.scooter.serial_number }} ({{ rental.scooter.model.name }})</h5>
-        <p class="mb-1"><strong>Начало:</strong> {{ rental.start_time|date:"d.m.Y H:i" }}</p>
+<div class="container mt-4">
+    <h2 class="mb-4">Управление поездками</h2>
 
-        {% if not rental.end_time %}
-            <div class="alert alert-info mt-2">
-                <form action="{% url 'finish_rent' rental.id %}" method="post">
-                    {% csrf_token %}
-                    <label>Выберите станцию завершения:</label>
-                    <select name="end_station" class="form-control mb-2" required>
-                        {% for station in stations %}
-                            <option value="{{ station.id }}">{{ station.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="btn btn-danger w-100">Завершить поездку</button>
-                </form>
-            </div>
-        {% else %}
-            <p class="mb-1"><strong>Завершено:</strong> {{ rental.end_time|date:"d.m.Y H:i" }}</p>
-            <p class="mb-1 text-success font-weight-bold"><strong>Сумма:</strong> {{ rental.total_cost }} руб.</p>
+    <div class="row mb-5">
+        <div class="col-12">
+            <h4 class="text-primary mb-3">
+                <i class="fas fa-play-circle me-2"></i>Текущая аренда
+            </h4>
 
-            <hr>
+            {% for rental in rentals %}
+                {% if not rental.end_time %}
+                <div class="card border-primary shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-lg-4 mb-3 mb-lg-0">
+                                <h5 class="card-title mb-1">{{ rental.scooter.model.name }}</h5>
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Старт: {{ rental.start_station.name }}<br>
+                                    <i class="fas fa-clock me-1"></i> Начало: {{ rental.start_time|date:"H:i" }}
+                                </p>
+                            </div>
 
-            {% if rental.review %}
-                <div class="mt-2 p-3 bg-light border rounded">
-                    <div class="d-flex justify-content-between">
-                        <strong>Ваша оценка: {{ rental.review.rating }}/5 ⭐</strong>
+                            <div class="col-lg-8">
+                                {% if rental.id %}
+                                <form action="{% url 'finish_rent' rental.id %}" method="post" class="row g-2">
+                                    {% csrf_token %}
+
+                                    <div class="col-md-5">
+                                        <label class="form-label small fw-bold">Парковка завершения:</label>
+                                        <select name="end_station" class="form-select form-select-sm" required>
+                                            <option value="" disabled selected>Выберите станцию...</option>
+                                            {% for station in stations %}
+                                                <option value="{{ station.id }}">{{ station.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold">Промокод:</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" name="promo_code" class="form-control" placeholder="Введите код">
+                                            <span class="input-group-text"><i class="fas fa-ticket-alt"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100">
+                                            Завершить
+                                        </button>
+                                    </div>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <p class="mb-0 italic text-muted">"{{ rental.review.text }}"</p>
                 </div>
-            {% else %}
-                <div class="mt-2">
-                    <a href="{% url 'leave_review' rental.id %}" class="btn btn-outline-primary btn-sm">
-                        Оставить отзыв
-                    </a>
-                </div>
-            {% endif %}
-        {% endif %}
+                {% endif %}
+            {% empty %}
+                <div class="alert alert-light border">У вас нет активных поездок в данный момент.</div>
+            {% endfor %}
+        </div>
     </div>
-    {% empty %}
-    <p>У вас пока нет поездок. Самое время <a href="{% url 'home' %}">арендовать самокат</a>!</p>
-    {% endfor %}
+
+    <hr class="my-5">
+
+    <h4 class="mb-3"><i class="fas fa-history me-2"></i>История поездок</h4>
+    <div class="table-responsive card shadow-sm">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата</th>
+                    <th>Самокат</th>
+                    <th>Маршрут</th>
+                    <th>Стоимость</th>
+                    <th>Отзыв</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rental in rentals %}
+                    {% if rental.end_time %}
+                    <tr>
+                        <td>{{ rental.start_time|date:"d.m.Y" }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ rental.scooter.serial_number }}</span></td>
+                        <td>
+                            <small class="text-muted">
+                                {{ rental.start_station.name }}
+                                <i class="fas fa-long-arrow-alt-right mx-1 text-primary"></i>
+                                {{ rental.end_station.name }}
+                            </small>
+                        </td>
+                        <td class="fw-bold text-dark">{{ rental.total_cost }} ₽</td>
+                        <td>
+                            {% if rental.review %}
+                                <span class="text-warning">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= rental.review.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                            {% elif rental.id %}
+                                <a href="{% url 'leave_review' rental.id %}" class="btn btn-sm btn-outline-primary">
+                                    Оценить
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

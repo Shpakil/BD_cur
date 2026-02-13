@@ -1,0 +1,8 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+    <div style="background: yellow; border: 5px solid red; padding: 20px; font-size: 20px; color: black; margin-bottom: 20px;">
+        ИНТЕРФЕЙС ЭКСПОРТА АКТИВИРОВАН: {{ export_buttons }}
+    </div>
+    {{ block.super }}
+{% endblock %}

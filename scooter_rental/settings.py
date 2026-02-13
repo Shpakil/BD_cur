@@ -8,15 +8,16 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'users',
+    'core',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Твои приложения
-    'users',
-    'core',
+
 ]
 
 MIDDLEWARE = [
@@ -67,10 +68,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Internal IPs for debug toolbar (if you use it)
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+
+
+
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
