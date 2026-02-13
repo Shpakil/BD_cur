@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="fas fa-wallet"></i> Пополнение баланса</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Ваш текущий баланс: <strong>{{ user.profile.balance }} ₽</strong></p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.amount.label_tag }}
+                        {{ form.amount }}
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Пополнить баланс</button>
+                </form>
+                <div class="mt-3 text-center">
+                    <a href="{% url 'user_profile' %}" class="text-secondary text-decoration-none small">Отмена</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,42 +1,66 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2 class="text-danger">🔧 Панель Техника</h2>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Модель</th>
-            <th>Статус</th>
-            <th>Действие</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for scooter in scooters %}
-        <tr>
-            <td>{{ scooter.serial_number }}</td>
-            <td>{{ scooter.model.name }}</td>
-            <td>
-                {% if scooter.status == 'broken' %}
-                    <span class="badge bg-danger">Сломан</span>
-                {% elif scooter.status == 'maintenance' %}
-                    <span class="badge bg-warning">Обслуживание</span>
-                {% else %}
-                    <span class="badge bg-success">{{ scooter.get_status_display }}</span>
-                {% endif %}
-            </td>
-            <td>
-                <form action="{% url 'change_status' scooter.id %}" method="post" class="d-flex">
-                    {% csrf_token %}
-                    <select name="status" class="form-select form-select-sm me-2">
-                        <option value="available">Доступен</option>
-                        <option value="maintenance">На обслуживание</option>
-                        <option value="broken">Сломан</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-outline-dark">Ок</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-danger">🔧 Панель Техника</h2>
+    <div>
+        <a href="{% url 'export_scooters_csv' %}" class="btn btn-sm btn-outline-success">Выгрузить CSV</a>
+        <a href="{% url 'export_scooters_json' %}" class="btn btn-sm btn-outline-primary" target="_blank">Выгрузить JSON</a>
+    </div>
+</div>
+
+{% if assigned_station %}
+    <div class="alert alert-info">Вы закреплены за станцией: <strong>{{ assigned_station.name }}</strong></div>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm bg-white">
+        <thead class="table-dark">
+            <tr>
+                <th>SN</th>
+                <th>Модель</th>
+                <th>Заряд</th> <th>Статус</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for scooter in scooters %}
+            <tr>
+                <td class="fw-bold">{{ scooter.serial_number }}</td>
+                <td>{{ scooter.model.name }}</td>
+
+                <td>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">{{ scooter.battery.capacity }}%</span>
+                        {% if scooter.battery.capacity < 10 %}
+                            <span class="badge bg-danger animate-pulse">НУЖНА ЗАРЯДКА</span>
+                        {% endif %}
+                    </div>
+                </td>
+
+                <td>
+                    {% if scooter.status == 'broken' %}
+                        <span class="badge bg-danger">Сломан</span>
+                    {% elif scooter.status == 'maintenance' %}
+                        <span class="badge bg-warning text-dark">Обслуживание</span>
+                    {% else %}
+                        <span class="badge bg-success">Доступен</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{% url 'change_status' scooter.id %}" method="post" class="d-flex">
+                        {% csrf_token %}
+                        <select name="status" class="form-select form-select-sm me-2">
+                            <option value="available" {% if scooter.status == 'available' %}selected{% endif %}>Доступен</option>
+                            <option value="maintenance" {% if scooter.status == 'maintenance' %}selected{% endif %}>Обслуживание</option>
+                            <option value="broken" {% if scooter.status == 'broken' %}selected{% endif %}>Сломан</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-dark">Ок</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

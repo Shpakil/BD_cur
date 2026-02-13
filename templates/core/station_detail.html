@@ -1,20 +1,67 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Самокаты на станции {{ station.name }}</h2>
-<div class="row">
-    {% for scooter in scooters %}
-    <div class="col-md-4">
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5>{{ scooter.model.name }}</h5>
-                <p>Заряд: {{ scooter.model.battery_level }}%</p>
-                <a href="{% url 'start_rent' scooter.id %}" class="btn btn-primary">Арендовать этот самокат</a>
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+            <li class="breadcrumb-item active">{{ station.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Самокаты на станции: {{ station.name }}</h2>
+        <span class="badge bg-secondary">{{ scooters|length }} доступно</span>
+    </div>
+
+    <div class="row">
+        {% for scooter in scooters %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ scooter.model.name }}</h5>
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-star me-1"></i>{{ scooter.get_avg_rating }}
+                        </span>
+                    </div>
+
+                    <p class="text-muted small mb-3">Серийный номер: {{ scooter.serial_number }}</p>
+
+                    <hr>
+
+                    <p class="card-text mb-2">
+                        <strong>Заряд:</strong>
+                        <span class="fw-bold {% if scooter.battery.capacity < 20 %}text-danger{% elif scooter.battery.capacity < 50 %}text-warning{% else %}text-success{% endif %}">
+                            {{ scooter.battery.capacity }}%
+                            <i class="fas {% if scooter.battery.capacity < 20 %}fa-battery-quarter{% elif scooter.battery.capacity < 60 %}fa-battery-half{% else %}fa-battery-full{% endif %}"></i>
+                        </span>
+                    </p>
+
+                    <p class="card-text mb-4">
+                        <strong>Пробег:</strong> {{ scooter.mileage }} км
+                    </p>
+
+                    <a href="{% url 'start_rent' scooter.id %}" class="btn btn-primary w-100 py-2">
+                        <i class="fas fa-play me-2"></i>Арендовать сейчас
+                    </a>
+                </div>
             </div>
         </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="alert alert-light shadow-sm">
+                <i class="fas fa-bicycle fa-3x mb-3 text-muted"></i>
+                <p class="lead">На этой станции сейчас нет свободных самокатов.</p>
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">Найти другую станцию</a>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>На этой станции сейчас нет свободных самокатов.</p>
-    {% endfor %}
 </div>
-<a href="{% url 'home' %}" class="btn btn-secondary">Назад к списку станций</a>
+
+<style>
+    .card { transition: transform 0.2s; }
+    .card:hover { transform: translateY(-5px); }
+</style>
 {% endblock %}

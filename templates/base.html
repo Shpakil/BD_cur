@@ -3,28 +3,52 @@
 <head>
     <title>Самокаты</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="container mt-4">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 px-3 shadow-sm rounded">
         <a class="navbar-brand" href="{% url 'home' %}">🛴 ScooterRent</a>
-        <div class="navbar-nav">
-            {% if user.is_authenticated %}
-                <a class="nav-item nav-link" href="{% url 'my_rentals' %}">Мои поездки</a>
-                {% if user.is_staff %}
-                    <a class="nav-item nav-link text-danger" href="{% url 'tech_dashboard' %}">🔧 Кабинет техника</a>
+
+        <div class="navbar-nav w-100 justify-content-between">
+            <div class="d-flex">
+                <a class="nav-item nav-link" href="{% url 'home' %}">Главная</a>
+
+                <a class="nav-item nav-link text-primary" href="{% url 'all_models_list' %}">
+                    <i class="fas fa-list"></i> Модели и страны
+                </a>
+
+                {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'my_rentals' %}">Мои поездки</a>
+                    <a class="nav-item nav-link" href="{% url 'user_profile' %}">Личный кабинет</a>
+
+                    {% if user.is_staff %}
+                        <a class="nav-item nav-link text-danger" href="{% url 'tech_dashboard' %}">🔧 Кабинет техника</a>
+                    {% endif %}
                 {% endif %}
-                <span class="nav-item nav-link disabled">Привет, {{ user.username }}</span>
-                <form action="{% url 'logout' %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-link nav-item nav-link">Выход</button>
-                </form>
-            {% else %}
-                <a class="nav-item nav-link" href="{% url 'login' %}">Вход</a>
-                <a class="nav-item nav-link" href="{% url 'register' %}">Регистрация</a>
-            {% endif %}
+            </div>
+
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <span class="badge bg-success me-3" style="font-size: 0.9rem;">
+                        💰 {{ user.profile.balance }} ₽
+                    </span>
+
+                    <span class="nav-item nav-link disabled py-0">Привет, <strong>{{ user.username }}</strong></span>
+
+                    <form action="{% url 'logout' %}" method="post" class="ms-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Выход</button>
+                    </form>
+                {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">Вход</a>
+                    <a class="nav-item nav-link" href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
     {% block content %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
