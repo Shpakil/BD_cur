@@ -7,7 +7,8 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user) # Сразу входим после регистрации
+            login(request, user)
+
             return redirect('home')
     else:
         form = CustomUserCreationForm()
